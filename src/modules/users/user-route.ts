@@ -2,9 +2,9 @@ import { Router } from "express";
 import { userController } from "./user-controller";
 
 const router = Router();
-router.post("/", userController.createUser);
-router.get("/", userController.getAllUsers);
-router.get("/:id", userController.getSingleUser);
-router.patch("/:id", userController.updateUser);
-router.delete("/:id", userController.deleteUser);
+router.post("/signup", userController.createUser);
+router.get("/users", userController.getAllUsers);
+router.get("/users/:id", userController.getSingleUser);
+router.patch("/users/:id", userController.updateUser);
+router.delete("/users/:id", userController.deleteUser);
 export const userRoute: any = router;

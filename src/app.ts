@@ -5,6 +5,7 @@ import express, {
 } from "express";
 import { userRoute } from "./modules/users/user-route";
 import { issuesRoute } from "./modules/issues/issues-route";
+import { authRouter } from "./modules/auth/auth-route";
 const app: Application = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -19,8 +20,10 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 // Importing user routes
-app.use("/api/users", userRoute);
+app.use("/api", userRoute);
 // importing issue routes
 app.use("/api/issues", issuesRoute);
+// importing auth routes
+app.use("/api/auth", authRouter);
 
 export default app;

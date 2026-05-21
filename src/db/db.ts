@@ -48,9 +48,8 @@ export const initDB = async () => {
     await pool.query(
       `ALTER TABLE issues ALTER COLUMN status SET DEFAULT 'open';`,
     );
-    await pool.query(`UPDATE issues SET status = 'open' WHERE status IS NULL;`);
-    await pool.query(`ALTER TABLE issues ALTER COLUMN status SET NOT NULL;`);
   } catch (error: any) {
     console.error("Error initializing the database:", error.message || error);
+    process.exit(1);
   }
 };

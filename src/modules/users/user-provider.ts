@@ -42,8 +42,33 @@ const getSingleUserDB = async (id: string) => {
   }
 };
 
+const updateUserDB = async (id: string, payload: IUser) => {
+  try {
+    const { name, email, password, role } = payload;
+    const hashPassword = password ? await bcrypt.hash(password, 12) : undefined;
+    const result = await pool.query(
+      `
+      UPDATE users
+      SET name = COALESCE($1, name),
+          email = COALESCE($2, email),
+          password = COALESCE($3, password),
+          role = COALESCE($4, role)
+      WHERE id = $5
+      RETURNING *
+      `,
+      [name, email, hashPassword, role, id],
+    );
+    return result.rows[0];
+  } catch (error: any) {
+    throw new Error(
+      "Error updating user in the database: " + (error.message || error),
+    );
+  }
+};
+
 export const userProvider = {
   createUserDB,
   getAllUsersDB,
   getSingleUserDB,
+  updateUserDB,
 };

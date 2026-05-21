@@ -5,3 +5,10 @@ export interface Issue {
   type: "bug" | "feature_request";
   status?: "open" | "in_progress" | "resolved";
 }
+
+type IssueSortOrder = "newest" | "oldest";
+export type IssueFilter = {
+  sort?: IssueSortOrder;
+  type?: "bug" | "feature_request";
+  status?: "open" | "in_progress" | "resolved";
+};

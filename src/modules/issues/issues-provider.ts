@@ -1,5 +1,36 @@
 import { pool } from "../../db/db";
-import { Issue } from "./issues-interface";
+import { Issue, IssueFilter } from "./issues-interface";
+
+const buildReporterMap = async (issues: any[]) => {
+  const reporterIds = [...new Set(issues.map((issue) => issue.reporter_id))];
+
+  if (reporterIds.length === 0) {
+    return new Map<number, { id: number; name: string; role: string }>();
+  }
+
+  const reportersResult = await pool.query(
+    `SELECT id, name, role FROM users WHERE id = ANY($1::int[])`,
+    [reporterIds],
+  );
+
+  return new Map(
+    reportersResult.rows.map((reporter) => [reporter.id, reporter]),
+  );
+};
+
+const formatIssueResponse = (
+  issue: any,
+  reporterMap: Map<number, { id: number; name: string; role: string }>,
+) => ({
+  id: issue.id,
+  title: issue.title,
+  description: issue.description,
+  type: issue.type,
+  status: issue.status,
+  reporter: reporterMap.get(issue.reporter_id) ?? null,
+  created_at: issue.created_at,
+  updated_at: issue.updated_at,
+});
 
 const issuesCreateDB = async (payload: Issue) => {
   try {
@@ -34,16 +65,54 @@ const issuesCreateDB = async (payload: Issue) => {
   }
 };
 
-const getAllIssuesDB = async () => {
+const getAllIssuesDB = async (filters: IssueFilter = {}) => {
   try {
-    const result = await pool.query(`SELECT * FROM issues`);
-    return result.rows;
+    const whereClauses: string[] = [];
+    const values: Array<string> = [];
+
+    if (filters.type) {
+      values.push(filters.type);
+      whereClauses.push(`type = $${values.length}`);
+    }
+
+    if (filters.status) {
+      values.push(filters.status);
+      whereClauses.push(`status = $${values.length}`);
+    }
+
+    const orderBy = filters.sort === "oldest" ? "ASC" : "DESC";
+    const whereSql = whereClauses.length
+      ? `WHERE ${whereClauses.join(" AND ")}`
+      : "";
+
+    const result = await pool.query(
+      `SELECT * FROM issues ${whereSql} ORDER BY created_at ${orderBy}`,
+      values,
+    );
+    const reporterMap = await buildReporterMap(result.rows);
+
+    return result.rows.map((issue) => formatIssueResponse(issue, reporterMap));
   } catch (error: any) {
     throw new Error("Error fetching issues: " + (error.message || error));
+  }
+};
+
+const getSingleIssueDB = async (id: string) => {
+  try {
+    const result = await pool.query(`SELECT * FROM issues WHERE id = $1`, [id]);
+    if (!result.rows.length) {
+      return null;
+    }
+
+    const reporterMap = await buildReporterMap(result.rows);
+    return formatIssueResponse(result.rows[0], reporterMap);
+  } catch (error: any) {
+    throw new Error("Error fetching issue: " + (error.message || error));
   }
 };
 
 export const issuesProvider = {
   issuesCreateDB,
   getAllIssuesDB,
+  getSingleIssueDB,
 };

@@ -34,7 +34,7 @@ export const initDB = async () => {
         type IN ('bug', 'feature_request')
     ),
 
-    status VARCHAR(50) DEFAULT 'open' CHECK (
+    status VARCHAR(50) NOT NULL DEFAULT 'open' CHECK (
         status IN ('open', 'in_progress', 'resolved')
     ),
 
@@ -44,6 +44,12 @@ export const initDB = async () => {
     updated_at TIMESTAMP DEFAULT NOW()
 );
     `);
+
+    await pool.query(
+      `ALTER TABLE issues ALTER COLUMN status SET DEFAULT 'open';`,
+    );
+    await pool.query(`UPDATE issues SET status = 'open' WHERE status IS NULL;`);
+    await pool.query(`ALTER TABLE issues ALTER COLUMN status SET NOT NULL;`);
   } catch (error: any) {
     console.error("Error initializing the database:", error.message || error);
   }

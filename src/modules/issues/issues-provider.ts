@@ -23,7 +23,7 @@ const issuesCreateDB = async (payload: Issue) => {
     const result = await pool.query(
       `
       INSERT INTO issues(reporter_id, title, description, type, status)
-      VALUES($1, $2, $3, $4, $5)
+      VALUES($1, $2, $3, $4, COALESCE($5, 'open'))
       RETURNING *
       `,
       [reporter_id, title, description, type, status],
@@ -34,6 +34,16 @@ const issuesCreateDB = async (payload: Issue) => {
   }
 };
 
+const getAllIssuesDB = async () => {
+  try {
+    const result = await pool.query(`SELECT * FROM issues`);
+    return result.rows;
+  } catch (error: any) {
+    throw new Error("Error fetching issues: " + (error.message || error));
+  }
+};
+
 export const issuesProvider = {
   issuesCreateDB,
+  getAllIssuesDB,
 };

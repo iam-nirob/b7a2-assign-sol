@@ -17,6 +17,23 @@ const createIssue = async (req: Request, res: Response) => {
   }
 };
 
+const getAllIssues = async (req: Request, res: Response) => {
+  try {
+    const result = await issuesProvider.getAllIssuesDB();
+    res.status(200).json({
+      success: true,
+      message: "Issues fetched successfully",
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(404).json({
+      success: false,
+      message: "Error fetching issues: " + (error.message || error),
+    });
+  }
+};
+
 export const issuesController = {
   createIssue,
+  getAllIssues,
 };

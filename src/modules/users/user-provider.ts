@@ -66,9 +66,24 @@ const updateUserDB = async (id: string, payload: IUser) => {
   }
 };
 
+const deleteUserDB = async (id: string) => {
+  try {
+    const result = await pool.query(
+      `DELETE FROM users WHERE id = $1 RETURNING *`,
+      [id],
+    );
+    return result.rows[0];
+  } catch (error: any) {
+    throw new Error(
+      "Error deleting user from the database: " + (error.message || error),
+    );
+  }
+};
+
 export const userProvider = {
   createUserDB,
   getAllUsersDB,
   getSingleUserDB,
   updateUserDB,
+  deleteUserDB,
 };

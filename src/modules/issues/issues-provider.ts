@@ -132,9 +132,19 @@ const updateIssueDB = async (id: string, payload: Issue) => {
   }
 };
 
+const deleteIssueDB = async (id: string) => {
+  try {
+    const result = await pool.query(`DELETE FROM issues WHERE id = $1`, [id]);
+    return result;
+  } catch (error: any) {
+    throw new Error("Error deleting issue: " + (error.message || error));
+  }
+};
+
 export const issuesProvider = {
   issuesCreateDB,
   getAllIssuesDB,
   getSingleIssueDB,
   updateIssueDB,
+  deleteIssueDB,
 };

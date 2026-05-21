@@ -1,9 +1,9 @@
 import app from "./app";
 import config from "./config/config";
-import { intBD } from "./db/db";
+import { initDB } from "./db/db";
 
 const main = async () => {
-  await intBD();
+  await initDB();
   app.listen(config.port, () => {
     console.log(`Server is running on port ${config.port}`);
   });

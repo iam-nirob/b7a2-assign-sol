@@ -14,6 +14,47 @@ const createUser = async (req: Request, res: Response) => {
   }
 };
 
+const getAllUsers = async (req: Request, res: Response) => {
+  try {
+    const result = await userProvider.getAllUsersDB();
+    res.status(200).json({
+      success: true,
+      message: "Users retrieved successfully",
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(404).json({
+      success: false,
+      message: "Users not found" + (error.message || error),
+    });
+  }
+};
+
+const getSingleUser = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const result = await userProvider.getSingleUserDB(id as string);
+    if (!result) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+    res.status(200).json({
+      success: true,
+      message: "User retrieved successfully",
+      data: result,
+    });
+  } catch (error: any) {
+    res.status(404).json({
+      success: false,
+      message: "User not found" + (error.message || error),
+    });
+  }
+};
+
 export const userController = {
   createUser,
+  getAllUsers,
+  getSingleUser,
 };

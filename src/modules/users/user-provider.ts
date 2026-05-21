@@ -19,6 +19,31 @@ const createUserDB = async (payload: IUser) => {
     );
   }
 };
+
+const getAllUsersDB = async () => {
+  try {
+    const result = await pool.query(`SELECT * FROM users`);
+    return result.rows;
+  } catch (error: any) {
+    throw new Error(
+      "Error retrieving users from the database: " + (error.message || error),
+    );
+  }
+};
+
+const getSingleUserDB = async (id: string) => {
+  try {
+    const result = await pool.query(`SELECT * FROM users WHERE id = $1`, [id]);
+    return result.rows[0];
+  } catch (error: any) {
+    throw new Error(
+      "Error retrieving user from the database: " + (error.message || error),
+    );
+  }
+};
+
 export const userProvider = {
   createUserDB,
+  getAllUsersDB,
+  getSingleUserDB,
 };

@@ -9,4 +9,4 @@ const main = async () => {
   });
 };
 
-await main();
+main();

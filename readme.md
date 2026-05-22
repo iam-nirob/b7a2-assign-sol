@@ -4,7 +4,7 @@ A collaborative platform for software teams to report bugs, suggest features, an
 
 ## Live URL
 
-> Add your Vercel deployment URL here
+> https://b7a2-assign-sol.vercel.app
 
 ---
 

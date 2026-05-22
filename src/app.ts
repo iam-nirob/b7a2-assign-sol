@@ -16,7 +16,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.text());
 app.use(
   cors({
-    origin: "http://localhost:5678",
+    origin: process.env.CLIENT_URL || "*",
+    credentials: true,
   }),
 );
 

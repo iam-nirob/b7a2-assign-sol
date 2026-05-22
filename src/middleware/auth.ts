@@ -6,7 +6,6 @@ import { ROLE } from "../types/role";
 
 const auth = (...roles: ROLE[]) => {
   return async (req: Request, res: Response, next: NextFunction) => {
-    console.log(roles);
     try {
       const token = req?.headers.authorization;
       if (!token) {

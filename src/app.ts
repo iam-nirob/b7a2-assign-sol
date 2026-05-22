@@ -6,7 +6,9 @@ import express, {
 import { userRoute } from "./modules/users/user-route";
 import { issuesRoute } from "./modules/issues/issues-route";
 import { authRouter } from "./modules/auth/auth-route";
+import CookieParser from "cookie-parser";
 const app: Application = express();
+app.use(CookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.text());

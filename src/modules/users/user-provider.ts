@@ -22,7 +22,9 @@ const createUserDB = async (payload: IUser) => {
 
 const getAllUsersDB = async () => {
   try {
-    const result = await pool.query(`SELECT * FROM users`);
+    const result = await pool.query(
+      `SELECT id,name,email,role,created_at, updated_at FROM users`,
+    );
     return result.rows;
   } catch (error: any) {
     throw new Error(

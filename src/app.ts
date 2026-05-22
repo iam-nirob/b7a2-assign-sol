@@ -7,11 +7,18 @@ import { userRoute } from "./modules/users/user-route";
 import { issuesRoute } from "./modules/issues/issues-route";
 import { authRouter } from "./modules/auth/auth-route";
 import CookieParser from "cookie-parser";
+import cors from "cors";
+import errorHandler from "./middleware/global-error-handiling";
 const app: Application = express();
 app.use(CookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.text());
+app.use(
+  cors({
+    origin: "http://localhost:5678",
+  }),
+);
 
 app.get("/", (req: Request, res: Response) => {
   try {
@@ -27,5 +34,8 @@ app.use("/api", userRoute);
 app.use("/api/issues", issuesRoute);
 // importing auth routes
 app.use("/api/auth", authRouter);
+
+// Global Error
+app.use(errorHandler);
 
 export default app;
